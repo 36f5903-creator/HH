@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>키오스크 연습실</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f5ff; --ink:#14213d; --sub:#51608a; --line:#d5ddf5;
+  --pri:#3157e0; --pri-d:#213fb5; --soft:#e7edff; --kiosk:#1a2142;
+  --sun:#ffcf4a; --sun-ink:#3a2a00; --ok:#17794a; --ok-bg:#dff5e8; --bad:#a8262b; --bad-bg:#fde7e7; --white:#fff;
+}
+*{box-sizing:border-box}
+html{font-size:18px}
+body{margin:0;color:var(--ink);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.6;background:linear-gradient(180deg,#dcebff 0,#f4f8ff 22rem) no-repeat,var(--bg)}
+button,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #ff8a1f;outline-offset:2px}
+.wrap{max-width:32rem;margin:0 auto;padding:.8rem .9rem 2.5rem}
+.top{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.8rem}
+.brand{display:flex;align-items:center;gap:.5rem;font-weight:900;font-size:1.05rem}
+.logo{width:2rem;height:2rem;border-radius:50%;background:var(--sun);display:grid;place-items:center;color:var(--sun-ink);font-size:1.15rem}
+.sizes{display:flex;gap:.3rem;align-items:center}
+.sizes span{font-size:.7rem;color:var(--sub);margin-right:.1rem}
+.sizes button{width:2.2rem;height:2.2rem;border:2px solid var(--line);background:var(--white);border-radius:.6rem;font-weight:700;padding:0;color:var(--sub)}
+.sizes button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+h1{font-size:1.55rem;line-height:1.3;margin:.2rem 0 .4rem;font-weight:900}
+h2{font-size:1.25rem;line-height:1.35;margin:0 0 .3rem;font-weight:700}
+p{margin:0 0 .6rem}
+.sub{color:var(--sub);font-size:.92rem}
+.hero{background:linear-gradient(150deg,#2447c9,#3a7df0);color:#fff;border-radius:1.4rem;padding:1.3rem 1.2rem;margin-bottom:1.1rem;position:relative;overflow:hidden}
+.hero h1{color:#fff;margin-top:0}
+.hero p{color:#e3eaff;margin:0;font-size:.95rem}
+.hero .deco{position:absolute;right:.6rem;top:.4rem;font-size:3.2rem}
+.label{font-weight:700;margin:0 0 .5rem}
+.types{display:grid;gap:.7rem}
+.t{display:flex;align-items:center;gap:.9rem;width:100%;text-align:left;padding:.95rem 1rem;background:var(--white);border:2.5px solid var(--line);border-radius:1.2rem;box-shadow:0 4px 0 var(--line)}
+.t:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.t .em{font-size:2rem;line-height:1.1;flex:none}
+.t .tx{display:flex;flex-direction:column}
+.t b{font-size:1.1rem}
+.t small{color:var(--sub);font-size:.85rem;line-height:1.45}
+.cta{display:block;width:100%;margin-top:1.1rem;padding:1.05rem;border:0;border-radius:1.1rem;background:var(--pri);color:#fff;font-weight:900;font-size:1.15rem;box-shadow:0 5px 0 var(--pri-d)}
+.cta:active{transform:translateY(3px);box-shadow:0 2px 0 var(--pri-d)}
+.plain{display:block;width:100%;margin-top:.7rem;padding:.85rem;border:2.5px solid var(--line);background:var(--white);border-radius:1rem;font-weight:500}
+.kiosk{background:var(--kiosk);border-radius:1.5rem;padding:.55rem;box-shadow:0 10px 0 #0d1330}
+.screen{background:linear-gradient(170deg,#3a6cf0,#2447c9);border-radius:1.1rem;padding:.9rem .9rem 1rem;color:#fff}
+.where{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:#cfdbff;margin-bottom:.55rem}
+.dots{display:flex;gap:.3rem;margin-bottom:.8rem}
+.dots i{flex:1;height:.4rem;border-radius:.3rem;background:rgba(255,255,255,.28)}
+.dots i.on{background:var(--sun)}
+.mission{display:flex;gap:.6rem;align-items:center;background:var(--sun);color:var(--sun-ink);border-radius:.9rem;padding:.65rem .8rem;font-weight:700;margin-bottom:.9rem}
+.mission .hand{font-size:1.4rem;flex:none}
+.mission small{display:block;font-weight:500;font-size:.78rem;opacity:.8}
+.screen h2{color:#fff}
+.opts{display:grid;gap:.65rem;margin-top:.7rem}
+.opts.two{grid-template-columns:1fr 1fr}
+.k{padding:1.1rem .6rem;border:0;background:#fff;color:var(--pri-d);border-radius:1rem;font-weight:900;font-size:1.08rem;box-shadow:0 5px 0 #b9c8f6}
+.k:active{transform:translateY(3px);box-shadow:0 2px 0 #b9c8f6}
+.k.shake{animation:sh .3s}
+.k.good{background:var(--ok-bg);color:var(--ok);box-shadow:0 5px 0 #9bd7b4}
+@keyframes sh{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@media (prefers-reduced-motion:reduce){.k.shake{animation:none}}
+.msg{margin-top:.8rem;padding:.65rem .8rem;border-radius:.8rem;font-size:.95rem;font-weight:500}
+.msg:empty{display:none}
+.msg.bad{background:var(--bad-bg);color:var(--bad)}
+.msg.ok{background:var(--ok-bg);color:var(--ok);font-weight:700}
+.msg.try{background:#fff3d6;color:#6b4a00}
+.cheer{margin:-.2rem 0 .7rem;font-size:.85rem;font-weight:700;color:var(--sun)}
+.help{display:block;width:100%;margin-top:1rem;padding:.8rem;border:2.5px solid var(--pri);background:var(--white);color:var(--pri-d);border-radius:1rem;font-weight:700}
+.panel{margin-top:.8rem;background:var(--white);border:2.5px solid var(--line);border-radius:1.1rem;padding:1rem}
+.panel h3{margin:0 0 .3rem;font-size:1rem;color:var(--pri-d)}
+.panel .sit{margin:0 0 .9rem;padding-bottom:.9rem;border-bottom:2px dashed var(--line)}
+.panel dl{margin:0}
+.panel dt{font-weight:900;margin-top:.7rem;display:flex;align-items:center;gap:.5rem}
+.panel dt i{font-style:normal;background:var(--pri);color:#fff;border-radius:.5rem;font-size:.75rem;padding:.05rem .45rem}
+.panel dd{margin:.15rem 0 0;color:var(--ink);font-size:.95rem}
+.bar{display:flex;gap:.6rem;margin-top:.9rem}
+.bar button{flex:1;padding:.75rem .4rem;border:2.5px solid var(--line);background:var(--white);border-radius:1rem;font-weight:700}
+.done{text-align:center;background:#fff6d6;border-radius:1.4rem;padding:1.4rem 1rem;border:2.5px solid var(--sun);margin-bottom:1.1rem}
+.done .big{font-size:3rem;margin:0}
+.radio{display:flex;align-items:center;gap:.7rem;padding:.8rem .9rem;border:2.5px solid var(--line);background:var(--white);border-radius:1rem;margin-bottom:.5rem;cursor:pointer}
+.radio:has(input:checked){border-color:var(--pri);background:var(--soft)}
+.radio input{width:1.25rem;height:1.25rem;accent-color:var(--pri)}
+textarea{width:100%;min-height:7rem;padding:.8rem;border:2.5px solid var(--line);border-radius:1rem;background:var(--white);resize:vertical}
+.fb{background:var(--white);border:2.5px solid var(--line);border-radius:1.4rem;padding:1.1rem}
+.fb h2{margin-bottom:.2rem}
+.padbox{background:rgba(255,255,255,.14);border-radius:.8rem;padding:.5rem .8rem;margin:.5rem 0}
+.padbox small{display:block;font-size:.75rem;color:#cfdbff}
+.padbox b{font-size:1.2rem;letter-spacing:.05em}
+.padshow{background:#fff;color:var(--ink);border-radius:.8rem;padding:.7rem .9rem;font-size:1.4rem;font-weight:700;min-height:3.2rem;letter-spacing:.08em;margin-bottom:.6rem}
+.padshow.empty{color:#9aa6c8;font-size:1rem;font-weight:500;letter-spacing:0;line-height:1.9rem}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.pad .k{padding:.8rem .2rem;font-size:1.15rem}
+.pad .k.sp{font-size:.9rem}
+.pad .k.go{background:var(--sun);color:var(--sun-ink);box-shadow:0 5px 0 #d9a91f}
+.t.free{border-color:var(--sun);background:#fff9e3;box-shadow:0 4px 0 #e8c14a}
+.chip{display:inline-flex;gap:.4rem;align-items:center;background:var(--soft);color:var(--pri-d);border-radius:2rem;padding:.2rem .8rem;font-weight:700;font-size:.85rem;margin-bottom:.4rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span class="logo" aria-hidden="true">☀</span>키오스크 연습실</div>
+    <div class="sizes" role="group" aria-label="글씨 크기"><span>글씨</span>
+      <button data-size="18" aria-label="보통 글씨" style="font-size:.8rem">가</button>
+      <button data-size="22" aria-label="크게" style="font-size:1rem">가</button>
+      <button data-size="26" aria-label="아주 크게" style="font-size:1.25rem">가</button>
+    </div>
+  </div>
+  <main id="view"></main>
+</div>
+
+<script>
+var S = function (t, o, ok, h, s, w) { return { title: t, opts: o, ok: ok, hint: h, sit: s, why: w }; };
+var P = function (t, label, len, fmt, s) { return { pad: 1, title: t, label: label, len: len, fmt: fmt, hint: "", sit: s, ok: 0, opts: ["숫자 버튼", "지우기", "확인"], why: ["누르면 위 칸에 숫자가 하나씩 들어가요.", "잘못 눌렀을 때 마지막 숫자를 지워요.", "다 입력한 뒤 눌러서 다음으로 넘어가요."] }; };
+
+var PAY = S("결제 방법을 골라 주세요", ["카드", "현금", "간편결제"], -1, "", "돈을 어떻게 낼지 고르는 화면이에요. 편한 방법을 골라 보세요.", ["카드를 카드 넣는 곳에 꽂아요.", "지폐를 넣어요. 현금을 못 받는 기계도 있어요.", "휴대폰 앱의 QR이나 바코드로 내요."]);
+var PAYGO = S("결제를 진행해 주세요", ["결제했어요", "취소"], 0, "결제를 마치고 눌러요.", "카드는 꽂고, 현금은 넣고, 간편결제는 QR을 대요. 끝난 뒤 눌러요.", ["결제를 마쳤을 때 눌러요.", "결제하지 않고 돌아가요."]);
+var RECEIPT = S("영수증을 받으시겠어요?", ["영수증 받기", "받지 않기"], -1, "", "거의 다 끝났어요. 영수증은 필요할 때만 받아요.", ["영수증이 기계 아래에서 나와요.", "영수증 없이 끝내요."]);
+var BILL_READ = S("고지서를 어떻게 알려 줄까요?", ["바코드를 읽히기", "번호를 직접 입력"], -1, "", "고지서 내용을 기계에 알려 주는 방법을 고르는 화면이에요.", ["고지서의 바코드를 읽는 곳에 대요. 금액이 자동으로 들어가요.", "긴 번호를 손으로 하나씩 눌러요. 틀리기 쉬워요."]);
+var BILL_OK = S("금액을 확인해 주세요", ["맞아요, 납부하기", "취소"], 0, "금액이 맞으면 납부하기를 눌러요.", "낼 금액이 맞는지 보는 화면이에요. 실제로는 이 뒤에 돈이 나가요.", ["금액이 맞을 때 눌러서 진행해요.", "납부하지 않고 돌아가요."]);
+var BIRTH = P("생년월일 6자리를 눌러 주세요", "생년월일", 6, "plain", "내 정보를 찾기 위해 생년월일을 넣는 화면이에요.");
+
+var TYPES = {
+  "관공서": { free: { entry: 0, map: { 1: [1, 1], 2: [0, 1] } }, em: "🏛️", sub: "서류 발급, 요금 납부", where: "관공서 민원 발급기", scenarios: [
+    { label: "서류 떼러 왔어요", desc: "서류를 기계로 뽑아요.", situation: "구청에서 서류를 떼는 상황입니다.",
+      steps: [
+        S("무엇을 하시겠어요?", ["번호표 뽑기", "요금 납부", "민원 발급"], 2, "서류를 직접 뽑는 일은 민원 발급이에요.", "구청이나 주민센터 기계의 첫 화면이에요.", ["직원 도움이 필요할 때 순서를 받아요.", "세금이나 과태료 고지서를 낼 때 눌러요.", "주민등록등본 같은 서류를 직접 뽑을 때 눌러요."]),
+        S("발급할 서류를 골라 주세요", ["주민등록등본", "가족관계증명서", "건강보험자격확인서"], -1, "", "뽑을 서류의 종류를 고르는 화면이에요. 필요한 서류를 골라 보세요.", ["같이 사는 가족 정보가 담긴 서류예요.", "부모, 배우자, 자녀 관계를 보여 줘요.", "건강보험 가입 상태를 보여 줘요."]),
+        S("본인 확인 방법을 골라 주세요", ["신분증 꽂고 지문 확인", "다른 사람 대신 신청"], -1, "", "아무나 서류를 뽑지 못하게 본인인지 확인하는 단계예요.", ["신분증을 넣고 지문 인식기에 손가락을 올려요.", "가족 등을 대신해 뽑을 때 쓰는 방법이에요."]),
+        PAY, PAYGO,
+        S("서류가 나왔어요", ["서류와 신분증을 챙겼어요"], 0, "서류와 신분증을 꼭 챙겨요.", "기계 아래에서 서류가 나오고 신분증이 나와요. 두고 가지 않게 챙겨요.", ["챙긴 뒤 눌러서 끝내요."])
+      ] },
+    { label: "과태료 내러 왔어요", desc: "고지서를 기계로 내요.", situation: "구청에서 과태료 고지서를 내는 상황입니다.",
+      steps: [
+        S("무엇을 하시겠어요?", ["번호표 뽑기", "요금 납부", "민원 발급"], 1, "고지서를 내는 일은 요금 납부예요.", "구청이나 주민센터 기계의 첫 화면이에요.", ["직원 도움이 필요할 때 순서를 받아요.", "세금이나 과태료 고지서를 낼 때 눌러요.", "서류를 직접 뽑을 때 눌러요."]),
+        BILL_READ, BILL_OK, PAY, PAYGO, RECEIPT
+      ] }
+  ]},
+  "은행": { free: { entry: 1, map: { 0: [1, 1], 1: [0, 0] } }, em: "🏦", sub: "돈 찾기, 통장 만들기", where: "은행 번호표 발급기", scenarios: [
+    { label: "돈 찾으러 왔어요", desc: "은행 기계(ATM)로 돈을 찾아요.", where: "은행 ATM(현금 입출금기)", situation: "은행 기계(ATM)로 돈을 찾는 상황입니다.",
+      steps: [
+        S("카드나 통장을 넣어 주세요", ["카드를 넣었어요", "통장을 넣었어요"], -1, "", "기계가 누구의 계좌인지 알아야 하는 첫 단계예요.", ["카드 넣는 곳에 카드를 꽂았을 때 눌러요.", "통장을 넣는 곳에 넣었을 때 눌러요."]),
+        P("비밀번호 4자리를 눌러 주세요", "비밀번호", 4, "secret", "카드 주인이 맞는지 확인하는 단계예요. 누른 숫자는 ●로 가려져요."),
+        S("어떤 업무를 하시겠어요?", ["출금(돈 찾기)", "입금(돈 넣기)", "계좌 이체", "잔액 조회"], 0, "돈을 찾는 일은 출금이에요.", "ATM에서 할 수 있는 일을 고르는 화면이에요.", ["내 계좌에서 현금을 꺼내요.", "현금을 기계에 넣어요.", "다른 사람 계좌로 돈을 보내요.", "계좌에 얼마 있는지 봐요."]),
+        S("얼마를 찾으시겠어요?", ["5만 원", "10만 원", "30만 원", "직접 입력"], -1, "", "찾을 금액을 고르는 화면이에요. 원하는 금액을 골라 보세요.", ["5만 원을 찾아요.", "10만 원을 찾아요.", "30만 원을 찾아요.", "원하는 금액을 숫자로 입력해요."]),
+        S("명세표를 받으시겠어요?", ["받기", "받지 않기"], -1, "", "거래 내용을 적은 종이를 받을지 고르는 화면이에요.", ["거래 내용이 적힌 종이가 나와요.", "종이 없이 끝내요."]),
+        S("카드와 현금을 꺼내세요", ["카드와 현금을 챙겼어요"], 0, "카드와 현금을 꼭 챙겨요.", "카드가 먼저 나오고 돈이 나와요. 카드를 두고 가면 안 돼요.", ["챙긴 뒤 눌러서 끝내요."])
+      ] },
+    { label: "통장 만들러 왔어요", desc: "직원과 상담할 번호표를 뽑아요.", situation: "은행에서 통장을 만들러 온 상황입니다.",
+      steps: [
+        S("원하는 업무를 눌러 주세요", ["상담 번호표 뽑기", "입출금", "통장 정리", "공과금 납부"], 0, "직원과 상담하려면 번호표가 먼저 필요해요.", "은행 입구의 번호표 기계 첫 화면이에요.", ["직원과 상담할 순서를 받아요.", "기계로 돈을 넣거나 뺄 때 눌러요.", "통장 거래 내역을 종이에 찍어요.", "고지서를 기계로 낼 때 눌러요."]),
+        S("어떤 상담인가요?", ["예금·통장 만들기", "대출 상담", "외환(외국 돈)", "기업 업무"], 0, "통장을 만드는 일은 예금 업무예요.", "상담 종류를 고르면 맞는 창구로 안내돼요.", ["통장이나 카드를 새로 만들 때 골라요.", "돈을 빌리는 일을 상담할 때 골라요.", "외국 돈을 바꿀 때 골라요.", "회사나 가게 이름으로 하는 일일 때 골라요."]),
+        S("번호표가 나왔어요", ["확인", "취소"], 0, "번호표를 받으려면 확인을 눌러요.", "번호와 기다리는 사람 수를 보여 줘요.", ["종이 번호표를 받고 끝내요.", "없던 일로 돌아가요."])
+      ] }
+  ]},
+  "병원": { free: { entry: 0, map: { 0: [0, 1], 1: [1, 1] } }, em: "🏥", sub: "진료 접수, 병원비 내기", where: "병원 접수 키오스크", scenarios: [
+    { label: "진료 받으러 왔어요", desc: "진료 접수를 해요.", situation: "병원에서 진료를 보는 상황입니다.",
+      steps: [
+        S("무엇을 하시겠어요?", ["접수하기", "진료비 수납", "증명서 발급", "예약 확인"], 0, "진료를 받으러 왔다면 접수가 먼저예요.", "병원 접수 기계의 첫 화면이에요.", ["진료 순서를 받아요.", "진료 후 병원비를 낼 때 눌러요.", "진단서나 영수증이 필요할 때 눌러요.", "예약 시간을 확인해요."]),
+        BIRTH,
+        S("진료과를 골라 주세요", ["내과", "정형외과", "피부과"], -1, "", "어느 과에서 진료받을지 고르는 화면이에요. 아픈 곳에 맞는 과를 골라 보세요.", ["감기, 배탈, 열처럼 몸 안쪽 증상일 때 가요.", "뼈, 관절, 허리가 아플 때 가요.", "피부 가려움이나 질환이 있을 때 가요."]),
+        S("접수 내용을 확인해 주세요", ["접수 확인", "취소"], 0, "내용이 맞으면 접수 확인을 눌러요.", "누르면 접수가 끝나고 대기번호표가 나와요.", ["접수를 끝내고 대기번호표를 받아요.", "접수하지 않고 돌아가요."])
+      ] },
+    { label: "병원비 내러 왔어요", desc: "진료 후 병원비를 내요.", situation: "병원에서 진료가 끝나고 병원비를 내는 상황입니다.",
+      steps: [
+        S("무엇을 하시겠어요?", ["접수하기", "진료비 수납", "증명서 발급", "예약 확인"], 1, "진료 후 병원비 내는 일은 수납이에요.", "병원 접수 기계의 첫 화면이에요.", ["진료 순서를 받아요.", "진료 후 병원비를 낼 때 눌러요.", "서류가 필요할 때 눌러요.", "예약 시간을 확인해요."]),
+        BIRTH,
+        S("진료비 12,400원을 결제할까요?", ["결제하기", "취소"], 0, "금액이 맞으면 결제하기를 눌러요.", "낼 금액을 확인하는 화면이에요. 실제로는 이 뒤에 돈이 나가요.", ["금액이 맞을 때 눌러서 결제로 넘어가요.", "결제하지 않고 돌아가요."]),
+        PAY, PAYGO, RECEIPT
+      ] }
+  ]},
+  "식당": { free: { entry: 0, map: { 0: [0, 1], 1: [0, 1] } }, em: "🍚", sub: "음식 주문, 포인트 적립", where: "식당 주문 키오스크", scenarios: [
+    { label: "먹고 포인트도 쌓고 싶어요", desc: "음식을 주문하고 포인트를 적립해요.", situation: "식당에서 음식을 주문하고 포인트를 적립하는 상황입니다.",
+      steps: [
+        S("어디서 드시겠어요?", ["매장에서 먹기", "포장하기"], -1, "", "식당 주문 기계의 첫 화면이에요.", ["식당 안에서 먹을 때 눌러요.", "음식을 가져가서 먹을 때 눌러요."]),
+        S("메뉴를 골라 주세요", ["불고기 세트", "비빔밥 세트", "김치찌개 세트"], -1, "", "먹고 싶은 메뉴를 골라 보세요. 실제 기계에는 사진과 가격이 같이 나와요.", ["불고기가 들어간 세트예요.", "나물과 고추장으로 비벼 먹는 세트예요.", "김치찌개가 중심인 세트예요."]),
+        S("주문 내역을 확인해 주세요", ["결제하기", "메뉴 더 담기", "전체 삭제"], 0, "더 먹을 게 없으면 결제하기를 눌러요.", "담은 메뉴와 합계를 보여 주는 장바구니 화면이에요.", ["다음 단계로 넘어가요.", "메뉴 고르는 화면으로 돌아가요.", "담은 메뉴를 모두 지워요."]),
+        S("포인트를 적립하시겠어요?", ["적립하기", "적립 안 함"], 0, "포인트를 쌓으려면 적립하기를 눌러요.", "결제 전에 먼저 적립 여부를 물어요. 이때 놓치면 나중에 적립하기 어려워요.", ["포인트를 쌓는 단계로 가요.", "적립 없이 결제로 가요."]),
+        S("적립 방법을 골라 주세요", ["휴대폰 번호로 적립", "바코드·카드로 적립"], -1, "", "어떤 정보로 내 포인트를 찾을지 고르는 화면이에요.", ["휴대폰 번호를 눌러서 적립해요.", "앱 바코드나 적립 카드를 읽는 곳에 대요."]),
+        P("휴대폰 번호를 눌러 주세요", "휴대폰 번호", 11, "phone", "포인트를 쌓을 휴대폰 번호를 넣는 화면이에요. 숫자 11자리를 눌러요."),
+        S("이 번호가 맞나요?", ["맞아요", "다시 입력"], 0, "번호가 맞으면 맞아요를 눌러요.", "번호가 틀리면 다른 사람에게 포인트가 쌓여요.", ["번호가 맞을 때 눌러요.", "번호를 다시 넣어요."]),
+        PAY, PAYGO,
+        S("주문이 끝났어요", ["주문번호표를 받았어요"], 0, "주문번호표를 꼭 챙겨요.", "주문번호표가 나오면 번호를 불러 줄 때까지 기다려요.", ["번호표를 챙긴 뒤 눌러서 끝내요."])
+      ] }
+  ]}
+};
+
+Object.keys(TYPES).forEach(function (t) {
+  var T = TYPES[t], f = T.free, en = T.scenarios[f.entry].steps[0];
+  en.opts.forEach(function (o, i) {
+    if (f.map[i]) return;
+    T.scenarios.push({ hidden: true, label: o, desc: "", situation: "", steps: [
+      S(o + " 화면이에요", ["확인", "취소"], 0, "", "실제 기계에서는 이 뒤에 안내가 더 이어져요. 연습에서는 확인을 눌러 마무리해요.", ["확인을 누르면 마무리돼요.", "처음 화면으로 돌아가요."])
+    ] });
+    f.map[i] = [T.scenarios.length - 1, 0];
+  });
+});
+
+var STUCK = ["첫 화면에서", "메뉴를 고를 때", "번호나 정보를 입력할 때", "결제할 때", "기타"];
+var state = { screen: "home", type: "", scn: 0, step: 0, size: 18, help: false, lock: false, pad: "", free: false, entry: false, start: 0 };
+var responses = [];
+var view = document.getElementById("view");
+
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+function cur() { return TYPES[state.type].scenarios[state.scn]; }
+function fmtNum(s, fmt) {
+  if (fmt === "secret") return s.replace(/./g, "●");
+  if (fmt === "phone") { var a = s.slice(0, 3), b = s.slice(3, 7), c = s.slice(7); return [a, b, c].filter(Boolean).join("-"); }
+  return s;
+}
+
+function applySize() {
+  document.documentElement.style.fontSize = state.size + "px";
+  var bs = document.querySelectorAll(".sizes button");
+  for (var i = 0; i < bs.length; i++) bs[i].setAttribute("aria-pressed", String(+bs[i].dataset.size === state.size));
+}
+
+function render() {
+  applySize();
+  if (state.screen === "home") home();
+  else if (state.screen === "scenario") scenario();
+  else if (state.screen === "practice") practice();
+  else if (state.screen === "finish") finish();
+  else feedback();
+  window.scrollTo(0, 0);
+}
+
+function home() {
+  var types = Object.keys(TYPES).map(function (t) {
+    var d = TYPES[t];
+    return '<button class="t" data-type="' + esc(t) + '"><span class="em" aria-hidden="true">' + d.em + '</span><span class="tx"><b>' + esc(t) + '</b><small>' + esc(d.sub) + '</small></span></button>';
+  }).join("");
+  view.innerHTML =
+    '<div class="hero"><h1>키오스크,<br>어렵지 않아요</h1><p>여기서 먼저 연습하면 금방 익숙해져요.<br>진짜 돈은 나가지 않으니 마음 편히 눌러 보세요.</p><span class="deco" aria-hidden="true">☀️</span></div>' +
+    '<p class="label">어디에 가시나요?</p>' +
+    '<div class="types">' + types + '</div>' +
+    '<p class="sub" style="margin:.9rem 0 0">상황 없이 마음대로 눌러 보는 "실전 모드"도 있어요.<br>글씨가 작으면 위쪽 "가" 버튼으로 키울 수 있어요.</p>';
+}
+
+function scenario() {
+  var d = TYPES[state.type];
+  var list = d.scenarios.map(function (sc, i) {
+    if (sc.hidden) return "";
+    return '<button class="t" data-scn="' + i + '"><span class="em" aria-hidden="true">' + d.em + '</span><span class="tx"><b>' + esc(sc.label) + '</b><small>' + esc(sc.desc) + '</small></span></button>';
+  }).join("") +
+    '<button class="t free" data-free="1"><span class="em" aria-hidden="true">🔓</span><span class="tx"><b>실전 모드</b><small>상황 없이 마음대로 눌러 봐요.</small></span></button>';
+  view.innerHTML =
+    '<span class="chip"><span aria-hidden="true">' + d.em + '</span>' + esc(state.type) + '</span>' +
+    '<h1>어떻게 오셨어요?</h1>' +
+    '<p class="sub">찾아온 이유를 눌러 주세요. 그 상황 그대로 연습해 볼 수 있어요.</p>' +
+    '<div class="types" style="margin-top:.8rem">' + list + '</div>' +
+    '<button class="plain" id="gohome">다른 곳 고르기</button>';
+}
+
+function practice() {
+  var d = TYPES[state.type], sc = cur(), s = sc.steps[state.step];
+  var dots = sc.steps.map(function (_, i) { return '<i class="' + (i <= state.step ? "on" : "") + '"></i>'; }).join("");
+  if (state.free) dots = "";
+  var body;
+  if (s.pad) {
+    var keys = "";
+    [1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function (n) { keys += '<button class="k" data-d="' + n + '">' + n + '</button>'; });
+    keys += '<button class="k sp" id="padDel">지우기</button><button class="k" data-d="0">0</button><button class="k sp go" id="padOk">확인</button>';
+    body = '<p class="sub" style="color:#cfdbff;margin:.2rem 0 .6rem">연습이니까 아무 숫자나 눌러도 돼요. (' + s.len + '자리)</p>' +
+      '<div class="padshow empty" id="padshow">숫자를 눌러 주세요</div><div class="pad">' + keys + '</div>';
+  } else {
+    var opts = s.opts.map(function (o, i) { return '<button class="k" data-i="' + i + '">' + esc(o) + '</button>'; }).join("");
+    body = '<div class="opts ' + (s.opts.length === 2 ? "two" : "") + '">' + opts + '</div>';
+  }
+  var panel = "";
+  if (state.help) {
+    var items = s.opts.map(function (o, i) { return '<dt><i>' + (i + 1) + '</i>' + esc(o) + '</dt><dd>' + esc(s.why[i]) + '</dd>'; }).join("");
+    panel = '<div class="panel" id="panel"><h3>지금 이 화면은요</h3><p class="sit">' + esc(s.sit) + '</p><h3>버튼 설명</h3><dl>' + items + '</dl></div>';
+  }
+  view.innerHTML =
+    '<div class="kiosk"><div class="screen">' +
+      '<div class="where"><span>' + (state.free ? "실전 모드 · " : "") + esc(sc.where || d.where) + '</span><span>' + (state.free ? "" : (state.step + 1) + ' / ' + sc.steps.length + ' 단계') + '</span></div>' +
+      '<div class="dots" aria-hidden="true">' + dots + '</div>' +
+      '<p class="cheer">' + (state.free ? "정답은 없어요. 마음대로 눌러 보세요!" : state.step === sc.steps.length - 1 ? "마지막이에요. 거의 다 왔어요!" : state.step === 0 ? "천천히, 하나씩 해 봐요." : "잘하고 계세요!") + '</p>' +
+      (state.free ? '' : '<div class="mission"><span class="hand" aria-hidden="true">🙋</span><span><small>지금 상황</small>' + esc(sc.situation) + '</span></div>') +
+      '<h2>' + esc(s.title) + '</h2>' + body +
+      '<div class="msg try" id="msg" role="status" aria-live="polite"></div>' +
+    '</div></div>' +
+    '<button class="help" id="help" aria-expanded="' + state.help + '">' + (state.help ? "설명 닫기" : "자세한 설명 보기") + '</button>' +
+    panel +
+    '<div class="bar"><button id="back">이전</button><button id="restart">처음부터</button></div>' +
+    '<button class="plain" id="goscn">다른 상황 고르기</button>';
+}
+
+function finish() {
+  view.innerHTML =
+    '<div class="done"><p class="big" aria-hidden="true">🎉</p><h1>해냈어요!</h1><p style="margin:0">' + (state.free ? '마음대로 눌러 보니 어때요?<br>이제 상황을 정해서 또 연습해 볼 수도 있어요.' : esc(cur().label) + ' 연습을 끝까지 하셨어요.<br>이제 진짜 키오스크 앞에서도 할 수 있어요. 화이팅!') + '</p></div>' +
+    '<button class="cta" id="gohome" style="margin-top:0">처음으로</button>' +
+    '<button class="plain" id="goscn">다른 상황 고르기</button>' +
+    '<button class="plain" id="again">' + (state.free ? "실전 모드 다시 해 보기" : "같은 상황 다시 연습") + '</button>' +
+    '<p class="sub" style="text-align:center;margin:1.4rem 0 .4rem">연습이 도움이 되었나요?</p>' +
+    '<button class="plain" id="gofb" style="margin-top:0;font-size:.9rem;color:var(--sub)">의견 남기기 (선택)</button>';
+}
+
+function feedback() {
+  var radios = STUCK.map(function (s) {
+    return '<label class="radio"><input type="radio" name="stuck" value="' + esc(s) + '"><span>' + esc(s) + '</span></label>';
+  }).join("");
+  view.innerHTML =
+    '<div class="fb">' +
+      '<h2>어디서 막혔나요?</h2><p class="sub">하나만 골라 주세요. 막히지 않았다면 건너뛰어도 돼요.</p>' + radios +
+      '<h2 style="margin-top:1rem">의견을 남겨 주세요</h2>' +
+      '<textarea id="fbtext" placeholder="예: 결제 화면에서 글씨가 작았어요"></textarea>' +
+      '<div class="msg bad" id="fberr" role="alert"></div>' +
+      '<button class="cta" id="fbsend" style="margin-top:.9rem">보내기</button>' +
+      '<div class="msg ok" id="fbok" role="status" aria-live="polite"></div>' +
+    '</div>' +
+    '<button class="plain" id="fbback">돌아가기</button>';
+}
+
+var NEG = ["취소", "다시 입력", "메뉴 더 담기", "전체 삭제", "내 정보가 아니에요"];
+var CHEERS = ["잘하셨어요!", "맞아요, 척척 하시네요!", "좋아요, 아주 잘하고 계세요!", "훌륭해요!", "바로 그거예요!"];
+function cheerWord() { return CHEERS[Math.floor(Math.random() * CHEERS.length)]; }
+function nextStep() {
+  var steps = cur().steps;
+  state.lock = false; state.help = false; state.pad = "";
+  if (state.step < steps.length - 1) { state.step++; state.screen = "practice"; }
+  else { state.screen = "finish"; }
+  render();
+}
+
+view.addEventListener("click", function (e) {
+  var b = e.target.closest("button");
+  if (!b) return;
+
+  if (b.dataset.type) { state.type = b.dataset.type; state.screen = "scenario"; return render(); }
+  if (b.dataset.scn) { state.free = false; state.entry = false; state.scn = +b.dataset.scn; state.step = 0; state.help = false; state.pad = ""; state.screen = "practice"; return render(); }
+  if (b.dataset.free) { var fr = TYPES[state.type].free; state.free = true; state.entry = true; state.scn = fr.entry; state.step = 0; state.start = 0; state.help = false; state.pad = ""; state.screen = "practice"; return render(); }
+  if ((b.id === "again" || b.id === "restart") && state.free) { state.scn = TYPES[state.type].free.entry; state.step = 0; state.entry = true; state.help = false; state.pad = ""; state.screen = "practice"; return render(); }
+  if (b.id === "again" || b.id === "restart") { state.step = 0; state.help = false; state.pad = ""; state.screen = "practice"; return render(); }
+  if (b.id === "goscn") { state.help = false; state.screen = "scenario"; return render(); }
+  if (b.id === "gohome") { state.help = false; state.screen = "home"; return render(); }
+  if (b.id === "gofb") { state.screen = "feedback"; return render(); }
+  if (b.id === "fbback") { state.screen = "finish"; return render(); }
+  if (b.id === "back") {
+    state.help = false; state.pad = "";
+    if (state.free) {
+      if (state.entry) { state.screen = "scenario"; }
+      else if (state.step > state.start) { state.step--; }
+      else { state.scn = TYPES[state.type].free.entry; state.step = 0; state.entry = true; }
+      return render();
+    }
+    if (state.step > 0) { state.step--; } else { state.screen = "scenario"; }
+    return render();
+  }
+  if (b.id === "help") {
+    state.help = !state.help;
+    render();
+    if (state.help) { var p = document.getElementById("panel"); if (p) p.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    return;
+  }
+
+  var s = state.screen === "practice" ? cur().steps[state.step] : null;
+
+  if (b.dataset.d !== undefined && s) {
+    if (state.pad.length < s.len) state.pad += b.dataset.d;
+    var show = document.getElementById("padshow");
+    show.className = "padshow" + (state.pad ? "" : " empty");
+    show.textContent = state.pad ? fmtNum(state.pad, s.fmt) : "숫자를 눌러 주세요";
+    document.getElementById("msg").textContent = "";
+    return;
+  }
+  if (b.id === "padDel" && s) {
+    state.pad = state.pad.slice(0, -1);
+    var sh = document.getElementById("padshow");
+    sh.className = "padshow" + (state.pad ? "" : " empty");
+    sh.textContent = state.pad ? fmtNum(state.pad, s.fmt) : "숫자를 눌러 주세요";
+    return;
+  }
+  if (b.id === "padOk" && s) {
+    var m = document.getElementById("msg");
+    if (state.pad.length < s.len) { m.className = "msg try"; m.textContent = "조금만 더 눌러 주세요. 모두 " + s.len + "자리예요."; return; }
+    state.lock = true; b.classList.add("good");
+    m.className = "msg ok"; m.textContent = cheerWord();
+    setTimeout(nextStep, 700);
+    return;
+  }
+
+  if (state.free && b.classList.contains("k") && s) {
+    if (state.lock) return;
+    var fmsg = document.getElementById("msg"), fr2 = TYPES[state.type].free;
+    if (state.entry) {
+      var mp = fr2.map[b.dataset.i];
+      if (!mp) return;
+      state.scn = mp[0]; state.step = mp[1]; state.start = mp[1]; state.entry = false; state.help = false; state.pad = "";
+      return render();
+    }
+    if (NEG.indexOf(s.opts[+b.dataset.i]) >= 0) {
+      state.scn = fr2.entry; state.step = 0; state.entry = true; state.help = false; state.pad = "";
+      return render();
+    }
+    state.lock = true; b.classList.add("good");
+    setTimeout(nextStep, 350);
+    return;
+  }
+
+  if (b.classList.contains("k") && s) {
+    if (state.lock) return;
+    var msg = document.getElementById("msg");
+    if (s.ok < 0 || +b.dataset.i === s.ok) {
+      state.lock = true;
+      b.classList.add("good");
+      msg.className = "msg ok"; msg.textContent = cheerWord();
+      setTimeout(nextStep, 700);
+    } else {
+      b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
+      msg.className = "msg try";
+      msg.textContent = "괜찮아요, 다시 눌러 볼까요? " + s.hint;
+    }
+    return;
+  }
+
+  if (b.id === "fbsend") {
+    var picked = view.querySelector('input[name="stuck"]:checked');
+    var ta = document.getElementById("fbtext");
+    var err = document.getElementById("fberr");
+    var text = ta.value.trim();
+    if (!picked && !text) { err.textContent = "막힌 곳을 고르거나 의견을 적어 주세요."; return; }
+    err.textContent = "";
+    var rec = { type: state.type, scenario: state.free ? "실전 모드" : cur().label, stuck: picked ? picked.value : "", text: text, at: new Date().toISOString() };
+    responses.push(rec);
+    console.log("입력된 의견", rec);
+    document.getElementById("fbok").textContent = "입력되었습니다. 감사합니다.";
+    ta.value = "";
+    if (picked) picked.checked = false;
+  }
+});
+
+document.querySelector(".sizes").addEventListener("click", function (e) {
+  var b = e.target.closest("button");
+  if (!b) return;
+  state.size = +b.dataset.size;
+  applySize();
+});
+
+render();
+</script>
+</body>
+</html>
